@@ -1,4 +1,18 @@
-students = []
+import json
+import os
+
+FILE = "students.json"
+
+# Load students
+if os.path.exists(FILE):
+    with open(FILE, "r") as f:
+        students = json.load(f)
+else:
+    students = []
+
+def save_students():
+    with open(FILE, "w") as f:
+        json.dump(students, f, indent=4)
 
 while True:
     print("\n===== STUDENT MANAGEMENT SYSTEM =====")
@@ -14,33 +28,38 @@ while True:
         name = input("Enter Student Name: ")
         roll = input("Enter Roll Number: ")
         students.append({"name": name, "roll": roll})
+        save_students()
         print("Student Added Successfully!")
 
     elif choice == "2":
-        if len(students) == 0:
+        if not students:
             print("No Students Found!")
         else:
-            for student in students:
-                print(f"Name: {student['name']} | Roll: {student['roll']}")
+            for s in students:
+                print(f"Name: {s['name']} | Roll: {s['roll']}")
 
     elif choice == "3":
         roll = input("Enter Roll Number to Search: ")
         found = False
-        for student in students:
-            if student["roll"] == roll:
-                print(f"Found: {student['name']} - {student['roll']}")
+        for s in students:
+            if s["roll"] == roll:
+                print(f"Found -> Name: {s['name']}, Roll: {s['roll']}")
                 found = True
+                break
         if not found:
             print("Student Not Found!")
 
     elif choice == "4":
         roll = input("Enter Roll Number to Delete: ")
-        for student in students:
-            if student["roll"] == roll:
-                students.remove(student)
-                print("Student Deleted!")
+        found = False
+        for s in students:
+            if s["roll"] == roll:
+                students.remove(s)
+                save_students()
+                print("Student Deleted Successfully!")
+                found = True
                 break
-        else:
+        if not found:
             print("Student Not Found!")
 
     elif choice == "5":
